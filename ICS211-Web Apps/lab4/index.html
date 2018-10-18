@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lab 4</title>
+</head>
+<body>
+
+<div id="App"></div>
+
+<script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+
+<script>
+  class ListTemplate extends React.Component {
+    render() {
+      let Title = React.createElement('h1', null, 'My Favorite WebVR sites');
+      let Subtitle = React.createElement('h3', null, 'Look at these cool sites:');
+      return React.createElement('div', null, Title, Subtitle);
+    }
+  }
+
+  class ListItem extends React.Component {
+    render() {
+      let itemLink = React.createElement ( 'a',
+        { href: 'https://chriseddy.github.io/threejs-webvr-solarsystem/' },
+        'https://chriseddy.github.io/threejs-webvr-solarsystem/' );
+
+      return React.createElement('li', null, this.props.Title, itemLink);
+    }
+  }
+
+  ReactDOM.render(
+    React.createElement('div', null,
+      React.createElement(ListTemplate),
+      React.createElement('ol', null,
+        React.createElement(ListItem,
+          {Title: 'Threejs WebVR Solarsystem: ', Link: 'https://chriseddy.github.io/threejs-webvr-solarsystem/'}
+        ),
+        React.createElement(ListItem,
+          {Title: 'Gunters of Oasis: ', Link: 'https://aframe.io/examples/showcase/gunters-of-oasis/'}
+        ),
+        React.createElement(ListItem,
+          {Title: 'A-Painter: ', Link: 'https://aframe.io/examples/showcase/a-painter/'}
+        ),
+      ),
+    ),
+    document.getElementById('App')
+  );
+
+</script>
+
+</body>
+</html>

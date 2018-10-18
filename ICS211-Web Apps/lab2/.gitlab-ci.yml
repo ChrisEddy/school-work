@@ -1,0 +1,23 @@
+# CI/CD File for Deploying a Hexo Site toGitLab Pages
+
+image: node:10.10.0
+
+
+# Cache modules across all branches and jobs
+cache:
+  key: project
+  paths:
+  -node_modules/
+
+stages:
+  - build
+
+before_script:
+  - npm install
+
+pages:
+  stage: build
+  script: - ./node_modules/hexo/bin/hexo generate
+  artifacts:
+    paths:
+      - public

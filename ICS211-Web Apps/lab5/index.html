@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Lab 4</title>
+  <script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 </head>
 <body>
 
@@ -11,42 +12,74 @@
 <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
 
-<script>
-  class ListTemplate extends React.Component {
+<script type="text/babel">
+
+  class FavSites extends React.Component {
     render() {
-      let Title = React.createElement('h1', null, 'My Favorite WebVR sites');
-      let Subtitle = React.createElement('h3', null, 'Look at these cool sites:');
-      return React.createElement('div', null, Title, Subtitle);
+      const favSitesStyle = {
+        height: 300,
+        width: 600,
+        padding: 20 ,
+        backgroundColor: '#FFF2CC',
+        boxShadow: '0px 0px 5px #666'
+      };
+      return (
+        <div style={favSitesStyle}>
+          <Title/>
+          <ol>
+            <Site Title={'Threejs WebVR Solarsystem: '} Link={'https://chriseddy.github.io/threejs-webvr-solarsystem/'}
+              SiteColor={'red'}/>
+            <Site Title={'Gunters of Oasis: '} Link={'https://aframe.io/examples/showcase/gunters-of-oasis/'}
+              SiteColor={'teal'}/>
+            <Site Title={'A-Painter: '} Link={'https://aframe.io/examples/showcase/a-painter/'}
+              SiteColor={'cyan'}/>
+            <Site Title={'Youtube 360: '} Link={'https://www.youtube.com/'}
+                  SiteColor={'teal'}/>
+            <Site Title={'Exokit: '} Link={'https://aframe.io/examples/showcase/a-painter/'}
+                  SiteColor={'cyan'}/>
+          </ol>
+        </div>
+      )
     }
   }
 
-  class ListItem extends React.Component {
+  class Title extends React.Component {
     render() {
-      let itemLink = React.createElement ( 'a',
-        { href: 'https://chriseddy.github.io/threejs-webvr-solarsystem/' },
-        'https://chriseddy.github.io/threejs-webvr-solarsystem/' );
+      const titleStyle = {
+        fontFamily: 'Helvetica',
+        color: 'blue',
+        fontSize: 18,
+        textDecoration: 'underline'
+      };
+      return(
+        <div style={titleStyle}>
+          <h1>My Favorite WebVR Sites</h1>
+          <h3>Look at these cool sites:</h3>
+        </div>
+      );
+    }
+  }
 
-      return React.createElement('li', null, this.props.Title, itemLink);
+  class Site extends React.Component {
+    render() {
+      const siteStyle = {
+        color: this.props.SiteColor,
+        fontSize: 16,
+      };
+      return(
+        <div style={siteStyle}>
+          <li>{this.props.Title}<a href={this.props.Link}>{this.props.Link}</a></li>
+        </div>
+      );
     }
   }
 
   ReactDOM.render(
-    React.createElement('div', null,
-      React.createElement(ListTemplate),
-      React.createElement('ol', null,
-        React.createElement(ListItem,
-          {Title: 'Threejs WebVR Solarsystem: ', Link: 'https://chriseddy.github.io/threejs-webvr-solarsystem/'}
-        ),
-        React.createElement(ListItem,
-          {Title: 'Gunters of Oasis: ', Link: 'https://aframe.io/examples/showcase/gunters-of-oasis/'}
-        ),
-        React.createElement(ListItem,
-          {Title: 'A-Painter: ', Link: 'https://aframe.io/examples/showcase/a-painter/'}
-        ),
-      ),
-    ),
+    <div>
+      <FavSites/>
+    </div>,
     document.getElementById('App')
-  );
+  )
 
 </script>
 

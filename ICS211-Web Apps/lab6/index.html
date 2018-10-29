@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lab 6</title>
+  <script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body>
+
+<div id="App"></div>
+
+<script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+
+<script type="text/babel">
+
+  class FavSites extends React.Component {
+
+    // run json server: json-server --watch sites.json
+
+    constructor(props) {
+      super(props);
+      this.state = {
+        sites: []
+      };
+    }
+
+    componentDidMount(){
+      fetch('http://localhost:3000/sites')
+        .then(response => this.handleHTTPErrors(response))
+        .then(response => response.json())
+        .then(result => {
+          this.setState({
+            sites: result
+          });
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    }
+
+    handleHTTPErrors(response){
+      if(!response.ok) throw Error(response.status +
+      ': ' + response.statusText);
+      return response;
+    }
+
+    render() {
+      const favSitesStyle = {
+        height: 300,
+        width: 600,
+        padding: 20 ,
+        backgroundColor: '#FFF2CC',
+        boxShadow: '0px 0px 5px #666'
+      };
+
+      const siteStyle = {
+        color: this.props.SiteColor,
+        fontSize: 16,
+        fontStyle: "italic"
+      };
+
+      const titleStyle = {
+        fontFamily: 'Helvetica',
+        color: 'blue',
+        fontSize: 18,
+        textDecoration: 'underline'
+      };
+
+
+      const Site = (props) => {
+        return(
+          <div style={props.SiteColor}>
+            <li>{props.Title}<a href={props.Link}>{props.Link}</a></li>
+          </div>
+        )
+      };
+
+      const Title = (props) => {
+        return(
+          <div style={titleStyle}>
+            <h1>My Favorite WebVR Sites</h1>
+            <h3>Look at these cool sites:</h3>
+          </div>
+        )
+      };
+
+      return (
+        <div style={favSitesStyle}>
+          <Title/>
+          <ol>
+            {this.state.sites.map(sites =>
+            <Site key={sites.id} Title={sites.name} Link={sites.link}
+              SiteColor={{color: sites.color}}/>
+            )}
+          </ol>
+        </div>
+      )
+    }
+  }
+
+  ReactDOM.render(
+    <div style={{"marginLeft": 25 + "%"}}>
+      <FavSites/>
+    </div>,
+    document.getElementById('App')
+  )
+
+</script>
+
+</body>
+</html>

@@ -1,7 +1,7 @@
 # Basic UDP server
 # Receives 3 1-byte integers, adds them, and returns the 1-byte result.
 
-# Run: python server.py 12345
+# Run: py -3 server.py 12345
 
 import socket
 import sys
@@ -24,42 +24,59 @@ while True:
     # unpack the data.
 
     operator = packet[0]
-    result = packet[2]
-    for x in range(len(packet)):
-        if x >= 3:
-            if operator == 0:
-                result = result - packet[x]
-            if operator == 1:
-                result = result + packet[x]
-            if operator == 2:
-                result = result * packet[x]
-            if operator == 3:
-                result = result / packet[x]
+    count = packet[1]
 
-    print('result:', result, 'operator:', operator, 'count:', packet[1])
+    firstByte = packet[2]
 
-    # Calculate the result.
+    print(firstByte)
 
-    # Pack the result into a 1-element byte array.
+    first4Byte = (firstByte & 0b11110000)
+    print(bin(first4Byte))
+    first4Byte = first4Byte >> 4
+    print(bin(first4Byte))
 
-    packet = bytearray(1)
-    if result >= 0:
-        packet[0] = 1
-    else:
-        packet[0] = 0
+    second4Byte = (firstByte & 0b00001111)
+    print(bin(second4Byte))
 
-    result = abs(int(result))
+    print(first4Byte)
+    print(second4Byte)
 
-    if result < 256:
-        packet.append(result)
-    else:
-        while result > 255:
-            packet.append(255)
-            result = result - 255
-        packet.append(result)
 
-    # Send the packet back to the client.
-    s.sendto(packet, addr)
+    # for x in range(len(packet)):
+    #     if x >= 3:
+    #         if operator == 0:
+    #             result = result - packet[x]
+    #         if operator == 1:
+    #             result = result + packet[x]
+    #         if operator == 2:
+    #             result = result * packet[x]
+    #         if operator == 3:
+    #             result = result / packet[x]
+    #
+    # print('result:', result, 'operator:', operator, 'count:', packet[1])
+    #
+    # # Calculate the result.
+    #
+    # # Pack the result into a 1-element byte array.
+    #
+    # packet = bytearray(1)
+    # if result >= 0:
+    #     packet[0] = 1
+    # else:
+    #     packet[0] = 0
+    #
+    # result = abs(int(result))
+    #
+    # if result < 256:
+    #     packet.append(result)
+    # else:
+    #     while result > 255:
+    #         packet.append(255)
+    #         result = result - 255
+    #     packet.append(result)
+    #
+    # # Send the packet back to the client.
+    # s.sendto(packet, addr)
 
 
 

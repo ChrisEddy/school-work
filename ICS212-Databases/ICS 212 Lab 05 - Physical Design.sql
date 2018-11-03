@@ -17,7 +17,7 @@ CREATE TABLE customers
     , cust_email         VARCHAR2(30)
     , account_mgr_id     NUMBER(6)
     , CONSTRAINT customers_pk PRIMARY KEY (customer_id)
-    ) ;
+    )
 
 -- ===========================================================================
 -- Create warehouses table
@@ -59,7 +59,12 @@ CREATE TABLE orders
     , sales_rep_id       NUMBER(6)
     , promotion_id       NUMBER(6)
     , CONSTRAINT order_pk PRIMARY KEY (order_id)
-    ) ;
+    )
+    -- Partition Orders on Order Dates as a range of 1 day per partition.
+PARTITION BY RANGE (order_date)
+INTERVAL(NUMTOYMINTERVAL(1, 'DAY'))
+(PARTITION olddata VALUES LESS THAN (TO_DATE('01-JAN-2008','DD-MON-YYYY'))
+);
 
 -- ===========================================================================
 -- Create inventories table, which contains a concatenated primary key.
@@ -78,6 +83,14 @@ CREATE TABLE inventories
 -- Create table product_information
 -- ===========================================================================
 
+-- Create cluster
+
+CREATE CLUSTER product_information_cluster
+  (product_id NUMBER(6))
+  SIZE 512;
+
+  CREATE INDEX idx_product_info_cluster ON CLUSTER product_information_cluster
+
 CREATE TABLE product_information
     ( product_id          NUMBER(6)
     , product_name        VARCHAR2(50)
@@ -91,7 +104,12 @@ CREATE TABLE product_information
     , min_price           NUMBER(8,2)
     , catalog_url         VARCHAR2(50)
     , CONSTRAINT product_information_pk PRIMARY KEY (product_id)
-    ) ;
+    )
+
+    CLUSTER product_information_cluster(product_id)
+
+-- Partition product_info on each category
+PARTITION BY REFERENCE (category_id);
 
 -- ===========================================================================
 -- Create table product_descriptions, which contains NVARCHAR2 columns for
@@ -108,6 +126,7 @@ CREATE TABLE product_descriptions
     , CONSTRAINT product_descriptions_pk 
     PRIMARY KEY (product_id, language_id)
     );
+
 
 -- ===========================================================================
 -- Create foreign key constraints now that all tables are in place.
@@ -150,5 +169,45 @@ ADD ( CONSTRAINT pd_product_id_fk
       FOREIGN KEY (product_id)
       REFERENCES product_information(product_id)
     ) ;
+
+
+-- Create Indexes for Customer Table
+
+CREATE INDEX customer_i01
+ON customer(account_mgr_id);
+CREATE INDEX orders_i02
+ON customer(nls_language);
+CREATE INDEX orders_i03
+ON customer(nls_territory);
+
+-- Create Indexes for Orders Table
+
+CREATE INDEX orders_i01
+ON orders(customer_id);
+CREATE INDEX orders_i02
+ON orders(order_date);
+CREATE INDEX orders_i03
+ON orders(order_status);
+CREATE INDEX orders_i04
+ON orders(sales_rep_id);
+CREATE INDEX orders_i05
+ON orders(promotion_id);
+
+-- Create Indexes for Order Items Table
+
+CREATE INDEX order_items_i01
+ON order_items(product_id);
+
+-- Create Indexes for Inventories Table
+
+CREATE INDEX inventories_i01
+ON inventories(quantity_on_hand);
+
+-- Create Indexes for Warehouses Table
+
+CREATE INDEX warehouses_i01
+ON warehouses(location_id);
+CREATE INDEX warehouses_i02
+ON warehouses(warehouse_name);
 
 commit;

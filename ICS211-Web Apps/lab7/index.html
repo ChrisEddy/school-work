@@ -43,10 +43,48 @@
     }
 
     submit(){
-      this.setState({showForm: false});
+      let id;
+      for(let i = 0; i < this.state.checkboxGroup.length; i++){
+        id = i + 1;
+        if(this.state.checkboxGroup[i]){
+          this.patchJSON(id, true)
+        }
+        else{
+          this.patchJSON(id, false)
+        }
+      }
+      this.updateSites();
+      this.setState({
+        showForm: false
+      });
+    }
+
+    patchJSON(id, boolean){
+      fetch(`http://localhost:3000/sites/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "checked": boolean
+        })
+
+      }).then(response=> this.handleHTTPErrors(response))
+        .then(result=> {
+          this.updateSites();
+        })
+        .catch(error=> {
+          console.log(error);
+        });
+
+
     }
 
     componentDidMount(){
+      this.updateSites();
+    }
+
+    updateSites(){
       fetch('http://localhost:3000/sites')
         .then(response => this.handleHTTPErrors(response))
         .then(response => response.json())

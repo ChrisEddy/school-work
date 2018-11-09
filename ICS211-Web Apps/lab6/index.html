@@ -54,19 +54,6 @@
         boxShadow: '0px 0px 5px #666'
       };
 
-      const siteStyle = {
-        color: this.props.SiteColor,
-        fontSize: 16,
-        fontStyle: "italic"
-      };
-
-      const titleStyle = {
-        fontFamily: 'Helvetica',
-        color: 'blue',
-        fontSize: 18,
-        textDecoration: 'underline'
-      };
-
 
       const Site = (props) => {
         return(
@@ -77,6 +64,14 @@
       };
 
       const Title = (props) => {
+
+        const titleStyle = {
+          fontFamily: 'Helvetica',
+          color: 'blue',
+          fontSize: 18,
+          textDecoration: 'underline'
+        };
+
         return(
           <div style={titleStyle}>
             <h1>My Favorite WebVR Sites</h1>

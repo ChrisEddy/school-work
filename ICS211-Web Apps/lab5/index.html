@@ -36,7 +36,7 @@
             <Site Title={'Youtube 360: '} Link={'https://www.youtube.com/'}
                   SiteColor={'teal'}/>
             <Site Title={'Exokit: '} Link={'https://aframe.io/examples/showcase/a-painter/'}
-                  SiteColor={'cyan'}/>
+                  SiteColor={'green'}/>
           </ol>
         </div>
       )
@@ -65,6 +65,7 @@
       const siteStyle = {
         color: this.props.SiteColor,
         fontSize: 16,
+        fontStyle: "italic"
       };
       return(
         <div style={siteStyle}>
@@ -75,7 +76,7 @@
   }
 
   ReactDOM.render(
-    <div>
+    <div style={{"marginLeft": 25 + "%"}}>
       <FavSites/>
     </div>,
     document.getElementById('App')

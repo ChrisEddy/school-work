@@ -1,4 +1,6 @@
-# python client.py localhost 12345 PUT test.txt
+# python3 client.py localhost 12345 PUT client/client.txt
+# python3 client.py localhost 12345 GET client/client.txt
+# python3 client.py localhost 12345 DELETE client/client.txt
 
 # client sending file <filename> (<NNN> bytes)
 
@@ -16,8 +18,11 @@ ACTION = sys.argv[3]
 FILE = sys.argv[4]
 MESSAGE = ''
 
-FILE_STATS = os.stat(FILE)
-FILE_SIZE = FILE_STATS.st_size
+try:
+    FILE_STATS = os.stat(FILE)
+    FILE_SIZE = FILE_STATS.st_size
+except IOError:
+    print('File does not exist on client side')
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))
@@ -43,17 +48,24 @@ if data == 'READY':
                     s.send(MESSAGE)
                     print(MESSAGE)
                     amountSent += 1024
+                f.close()
 
     if ACTION == 'GET':
         MESSAGE = 'GET ' + str(FILE)
         s.send(MESSAGE.encode('utf8'))
         print('client receiving file ' + FILE + '(101 bytes)')
         data = s.recv(BUFFER_SIZE).decode('utf-8')
+
     if ACTION == 'DELETE':
         print('client deleting file ' + FILE)
         MESSAGE = 'DELETE ' + str(FILE)
         s.send(MESSAGE.encode('utf8'))
         data = s.recv(BUFFER_SIZE).decode('utf-8')
+        if data == 'DONE':
+            print('Delete successful, ' + data)
+        else:
+            print(data)  # Print the ERROR response from server
+
 
 s.close()
 

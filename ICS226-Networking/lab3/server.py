@@ -47,8 +47,8 @@ while True:
                     data = conn.recv(BUFFER_SIZE)  # Get a packet of bytes from client
                     file.write(data)  # Write packet to file
                     bytesReceived += 1024
-                data = 'DONE'
-                conn.send(data.encode('utf-8'))
+            data = 'DONE'
+            conn.send(data.encode('utf-8'))
             data = ''
 
         if data.split(' ', 1)[0] == 'GET':
@@ -77,7 +77,7 @@ while True:
                     conn.send(data.encode('utf-8'))
                     data = ''
 
-        if data.split(' ', 1)[0] == 'DELETE':
+        if data.split(' ', 1)[0] == 'DEL':
             FILE = data.split(' ', 1)[1]
             if os.path.exists(FILE):
                 try:

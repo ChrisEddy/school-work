@@ -22,7 +22,8 @@ try:
     FILE_STATS = os.stat(FILE)
     FILE_SIZE = FILE_STATS.st_size
 except IOError:
-    print('File does not exist on client side')
+    FILE_SIZE = None
+    FILE_STATS = None
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))
@@ -58,32 +59,32 @@ if data == 'READY':
         if data == 'OK':
             MESSAGE = 'READY'
             s.send(MESSAGE.encode('utf8'))  # Send READY to server
-            print('waiting for byteCount')
             data = s.recv(BUFFER_SIZE)  # Wait for byteCount of fileSize from server
-            print('got byteCount')
             byteCount = int.from_bytes(data, byteorder='big')  # convert to byte count to int
             MESSAGE = 'OK'
             s.send(MESSAGE.encode('utf8'))  # Send OK to server
             amountReceived = 0
-            print('client receiving file ' + FILE + '(' + str(byteCount) + ' bytes)')
+            print('client receiving file ' + FILE + ' (' + str(byteCount) + ' bytes)')
             with open(FILE, 'wb') as file:
                 while amountReceived < byteCount:
                     data = s.recv(BUFFER_SIZE)  # Receive file packets from server
-                    file.write(data)
-                    print(data)
-                    amountReceived += 1024
-                    print(amountReceived, byteCount)
+                    if b'DONE' in data:
+                        data = data[:-4]
+                        file.write(data)
+                        amountReceived += 1024
+                    else:
+                        file.write(data)
+                        amountReceived += 1024
                 file.close()
-            if b'DONE' in data:
                 print('Complete')
 
-    if ACTION == 'DELETE':
+    if ACTION == 'DEL':
         print('client deleting file ' + FILE)
-        MESSAGE = 'DELETE ' + str(FILE)
+        MESSAGE = 'DEL ' + str(FILE)
         s.send(MESSAGE.encode('utf8'))
         data = s.recv(BUFFER_SIZE).decode('utf-8')
         if data == 'DONE':
-            print('Delete successful, ' + data)
+            print('Complete')
         else:
             print(data)  # Print the ERROR response from server
 

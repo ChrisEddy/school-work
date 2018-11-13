@@ -2,6 +2,7 @@
 # python3 client.py localhost 12345 GET client/client.txt
 # python3 client.py localhost 12345 DELETE client/client.txt
 
+
 # client sending file <filename> (<NNN> bytes)
 
 # !/usr/bin/env python
@@ -9,7 +10,6 @@
 import socket
 import sys
 import os
-import io
 
 BUFFER_SIZE = 1024
 HOST = sys.argv[1]
@@ -32,7 +32,7 @@ data = s.recv(BUFFER_SIZE).decode('utf-8')
 if data == 'READY':
     if ACTION == 'PUT':
         MESSAGE = 'PUT ' + str(FILE)
-        print('client sending file', str(FILE), '(' + str(FILE_SIZE), 'bytes' + ')')
+        print('client sending file', str(FILE), '(' + str(FILE_SIZE), 'bytes)')
         s.send(MESSAGE.encode('utf8'))  # Send command to server
         data = s.recv(BUFFER_SIZE).decode('utf-8')
         if data == 'OK':
@@ -40,22 +40,39 @@ if data == 'READY':
             s.send(MESSAGE)  # Send byte count to server
             data = s.recv(BUFFER_SIZE).decode('utf-8')  # Wait for an 'OK'
             if data == 'OK':
-                print('SENDING FILE BYTES')  # Begin sending File
-                f = open(FILE, "rb")
+                f = open(FILE, "rb")  # open file for bytes streaming to server
                 amountSent = 0
                 while amountSent < FILE_SIZE:
                     MESSAGE = f.read(1024)
                     s.send(MESSAGE)
-                    print(MESSAGE)
                     amountSent += 1024
-                f.close()
+                data = s.recv(BUFFER_SIZE).decode('utf-8')  # Wait for 'DONE'
+                if data == 'DONE':
+                    print('Complete')
 
     if ACTION == 'GET':
         MESSAGE = 'GET ' + str(FILE)
-        s.send(MESSAGE.encode('utf8'))
-        print('client receiving file ' + FILE + '(101 bytes)')
-        data = s.recv(BUFFER_SIZE).decode('utf-8')
-
+        s.send(MESSAGE.encode('utf8'))  # Send command
+        data = s.recv(BUFFER_SIZE).decode('utf-8')  # Wait for 'OK' from server
+        if data == 'OK':
+            MESSAGE = 'READY'
+            s.send(MESSAGE.encode('utf8'))  # Send READY to server
+            print('waiting for byteCount')
+            data = s.recv(BUFFER_SIZE)  # Wait for byteCount of fileSize from server
+            print('got byteCount')
+            byteCount = int.from_bytes(data, byteorder='big')  # convert to byte count to int
+            MESSAGE = 'OK'
+            s.send(MESSAGE.encode('utf8'))  # Send OK to server
+            amountReceived = 0
+            print('client receiving file ' + FILE + '(' + str(FILE_SIZE) + ' bytes)')
+            with open('hellomydude.txt', 'wb') as file:
+                while amountReceived < byteCount:
+                    data = s.recv(BUFFER_SIZE)  # Receive file packets from server
+                    file.write(data)
+                    amountReceived += 1024
+                data = s.recv(BUFFER_SIZE).decode('utf-8')  # Wait for 'DONE'
+                if data == 'DONE':
+                    print('Complete')
     if ACTION == 'DELETE':
         print('client deleting file ' + FILE)
         MESSAGE = 'DELETE ' + str(FILE)

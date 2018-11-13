@@ -46,11 +46,34 @@ while True:
                     data = conn.recv(BUFFER_SIZE)  # Get a packet of bytes from client
                     file.write(data)  # Write packet to file
                     bytesReceived += 1024
-                file.close()
+                data = 'DONE'
+                conn.send(data.encode('utf-8'))
             data = ''
         if data.split(' ', 1)[0] == 'GET':
-            print('server sending <NNN> byte')
-            data = ''
+            FILE = data.split(' ', 1)[1]
+            FILE_STATS = os.stat(FILE)
+            FILE_SIZE = FILE_STATS.st_size
+            data = 'OK'
+            conn.send(data.encode('utf-8'))  # Send OK to client
+            print('waiting for READY from client')
+            data = conn.recv(BUFFER_SIZE).decode('utf-8')  # Wait for 'READY' from client
+            print('got READY from client')
+
+            if data == 'READY':
+                MESSAGE = FILE_SIZE.to_bytes(FILE_SIZE.bit_length(), byteorder='big', signed=True)  # Create byte count
+                conn.send(MESSAGE)  # Send byte count to client
+                data = conn.recv(BUFFER_SIZE).decode('utf-8')  # Wait for 'OK' from client
+                if data == 'OK':
+                    print('server sending ' + str(FILE_SIZE) + ' bytes')
+                    with open(FILE, 'rb') as file:
+                        sentBytes = 0
+                        while sentBytes < FILE_SIZE:
+                            MESSAGE = file.read(1024)
+                            conn.send(MESSAGE)
+                            sentBytes += 1024
+                    data = 'DONE'
+                    conn.send(data.encode('utf-8'))
+                data = ''
         if data.split(' ', 1)[0] == 'DELETE':
             FILE = data.split(' ', 1)[1]
             print('server deleting file:', FILE)

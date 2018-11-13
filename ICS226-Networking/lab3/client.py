@@ -1,6 +1,6 @@
-# python3 client.py localhost 12345 PUT client/client.txt
-# python3 client.py localhost 12345 GET client/client.txt
-# python3 client.py localhost 12345 DELETE client/client.txt
+# py -3 client.py localhost 12345 PUT EMMA.txt
+# py -3 client.py localhost 12345 GET CHRIS.txt
+# py -3 client.py localhost 12345 DELETE ayyy.txt
 
 
 # client sending file <filename> (<NNN> bytes)
@@ -30,6 +30,7 @@ s.connect((HOST, PORT))
 data = s.recv(BUFFER_SIZE).decode('utf-8')
 
 if data == 'READY':
+
     if ACTION == 'PUT':
         MESSAGE = 'PUT ' + str(FILE)
         print('client sending file', str(FILE), '(' + str(FILE_SIZE), 'bytes)')
@@ -64,15 +65,18 @@ if data == 'READY':
             MESSAGE = 'OK'
             s.send(MESSAGE.encode('utf8'))  # Send OK to server
             amountReceived = 0
-            print('client receiving file ' + FILE + '(' + str(FILE_SIZE) + ' bytes)')
-            with open('hellomydude.txt', 'wb') as file:
+            print('client receiving file ' + FILE + '(' + str(byteCount) + ' bytes)')
+            with open(FILE, 'wb') as file:
                 while amountReceived < byteCount:
                     data = s.recv(BUFFER_SIZE)  # Receive file packets from server
                     file.write(data)
+                    print(data)
                     amountReceived += 1024
-                data = s.recv(BUFFER_SIZE).decode('utf-8')  # Wait for 'DONE'
-                if data == 'DONE':
-                    print('Complete')
+                    print(amountReceived, byteCount)
+                file.close()
+            if b'DONE' in data:
+                print('Complete')
+
     if ACTION == 'DELETE':
         print('client deleting file ' + FILE)
         MESSAGE = 'DELETE ' + str(FILE)
@@ -82,7 +86,6 @@ if data == 'READY':
             print('Delete successful, ' + data)
         else:
             print(data)  # Print the ERROR response from server
-
 
 s.close()
 

@@ -1,4 +1,4 @@
-# python3 server.py 12345 -v
+# py -3 server.py 12345 -v
 
 #!/usr/bin/env python
 
@@ -28,8 +28,10 @@ while True:
     data = 'READY'
     conn.send(data.encode('utf-8'))  # echo
     data = conn.recv(BUFFER_SIZE).decode('utf-8')
+
     if data != '':
         print('server receiving request:', data)
+
         if data.split(' ', 1)[0] == 'PUT':
             FILE = data.split(' ', 1)[1]
             data = 'OK'
@@ -39,8 +41,7 @@ while True:
             print('server receiving ' + str(byteCount) + ' bytes')
             data = 'OK'
             conn.send(data.encode('utf-8'))  # Send OK to client, server is ready to receive data
-            print(FILE)
-            with open('server/' + FILE, 'wab+') as file:
+            with open(FILE, 'wb') as file:
                 bytesReceived = 0
                 while bytesReceived < byteCount:
                     data = conn.recv(BUFFER_SIZE)  # Get a packet of bytes from client
@@ -49,6 +50,7 @@ while True:
                 data = 'DONE'
                 conn.send(data.encode('utf-8'))
             data = ''
+
         if data.split(' ', 1)[0] == 'GET':
             FILE = data.split(' ', 1)[1]
             FILE_STATS = os.stat(FILE)
@@ -57,28 +59,29 @@ while True:
             conn.send(data.encode('utf-8'))  # Send OK to client
             print('waiting for READY from client')
             data = conn.recv(BUFFER_SIZE).decode('utf-8')  # Wait for 'READY' from client
-            print('got READY from client')
-
             if data == 'READY':
+                print('got READY from client')
                 MESSAGE = FILE_SIZE.to_bytes(FILE_SIZE.bit_length(), byteorder='big', signed=True)  # Create byte count
                 conn.send(MESSAGE)  # Send byte count to client
                 data = conn.recv(BUFFER_SIZE).decode('utf-8')  # Wait for 'OK' from client
                 if data == 'OK':
                     print('server sending ' + str(FILE_SIZE) + ' bytes')
+                    sentBytes = 0
                     with open(FILE, 'rb') as file:
-                        sentBytes = 0
                         while sentBytes < FILE_SIZE:
                             MESSAGE = file.read(1024)
                             conn.send(MESSAGE)
                             sentBytes += 1024
+                        file.close()
                     data = 'DONE'
                     conn.send(data.encode('utf-8'))
-                data = ''
+                    data = ''
+
         if data.split(' ', 1)[0] == 'DELETE':
             FILE = data.split(' ', 1)[1]
-            print('server deleting file:', FILE)
             if os.path.exists(FILE):
                 try:
+                    print('server deleting file:', FILE)
                     os.remove(FILE)
                     data = 'DONE'
                     conn.send(data.encode('utf-8'))  # Send DONE to client, file has been deleted

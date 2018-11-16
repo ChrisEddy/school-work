@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import './App.css';
-import FavSites from "./FavSites";
+import FavSitesForm from "./FavSitesForm";
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <FavSites/>
+        <FavSitesForm/>
       </div>
     );
   }

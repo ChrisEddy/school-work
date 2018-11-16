@@ -2,21 +2,21 @@
   "sites": [
     {
       "id": 1,
-      "checked": true,
+      "checked": false,
       "name": "Threejs WebVR Solarsystem: ",
       "link": "https://chriseddy.github.io/threejs-webvr-solarsystem/",
       "color": "red"
     },
     {
       "id": 2,
-      "checked": true,
+      "checked": false,
       "name": "Gunters of Oasis: ",
       "link": "https://aframe.io/examples/showcase/gunters-of-oasis/",
       "color": "teal"
     },
     {
       "id": 3,
-      "checked": true,
+      "checked": false,
       "name": "A-Painter: ",
       "link": "https://aframe.io/examples/showcase/a-painter/",
       "color": "cyan"
@@ -30,7 +30,7 @@
     },
     {
       "id": 5,
-      "checked": false,
+      "checked": true,
       "name": "Google: ",
       "link": "https://www.google.com/",
       "color": "black"

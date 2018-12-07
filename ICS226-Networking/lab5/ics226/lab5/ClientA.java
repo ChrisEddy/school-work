@@ -4,6 +4,7 @@
 package ics226.lab5;
 import java.net.*;
 import java.io.*;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.nio.charset.Charset;
@@ -13,7 +14,8 @@ class ClientA {
         String host = "";
         String port = "";
         String operand = "";
-        List<String> numbers = new ArrayList<>();
+        int operandNum = 0;
+        List<Integer> numbers = new ArrayList<>();
         System.out.println("Client running");
 
         for (int i = 0; i < args.length; i++) {
@@ -25,9 +27,23 @@ class ClientA {
             }
             if(i == 2){
                 operand = args[i];
+                switch(operand){
+                    case "-": 
+                    operandNum = 0;
+                    break;
+                    case "+": 
+                    operandNum = 1;
+                    break;
+                    case "*": 
+                    operandNum = 2;
+                    break;
+                    case "/": 
+                    operandNum = 3;
+                    break;
+                }
             }
             else if(i > 2){
-                numbers.add(args[i]);
+                numbers.add(Integer.parseInt(args[i]));
             }
         }
         System.out.println(host + " " + port + " " + operand + " " + numbers);
@@ -37,23 +53,42 @@ class ClientA {
             BufferedInputStream inputStream = new BufferedInputStream(socket.getInputStream());
             BufferedOutputStream outputStream = new BufferedOutputStream(socket.getOutputStream());
     
-            // To read:
             byte[] buffer = new byte[1024];
+            int count = inputStream.read(buffer); // Wait for READY from server
+            String request = new String(buffer, Charset.forName("UTF-8")).trim(); //Convert to String and trim excess space
+            System.out.println(request);
 
-            String ready = "READY\n";
-            byte[] data = ready.getBytes(Charset.forName("UTF-8"));
+            if(request.equals("READY")){
+                System.out.println("READY recieved from server");
 
-            for(int i = 0; i < data.length; i++){
-                buffer[i] = data[i];
+                buffer[0] = (byte)operandNum; // make first index the operand
+                buffer[1] = (byte)numbers.size(); // make second index the count
+
+                for (int i = 0; i < numbers.size(); i++){ // assign buffer numbers 
+                    buffer[i + 2] = (byte)numbers.get(i).intValue();
+                    System.out.println((byte)numbers.get(i).intValue());
+                }
+
+                System.out.println("operandnum: " + operandNum);
+    
+                outputStream.write(buffer); // send it off
+                outputStream.flush();
+
+                // Get result
+                int result = 0;
+
+                inputStream.read(buffer);
+                result = buffer[0];
+                System.out.println("Result: " + result);
+        
+                // When done:
+                socket.close();
+
+            }
+            else{
+                System.out.println("Ready not recieved");
             }
 
-            // To write:
-            // … add bytes to buffer as required.
-            outputStream.write(buffer);
-            outputStream.flush();
-    
-            // When done:
-            socket.close();
         }
         catch(IOException error){
             error.printStackTrace();

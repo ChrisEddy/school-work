@@ -21,31 +21,77 @@ class ServerA {
                 BufferedInputStream inputStream = new BufferedInputStream(client.getInputStream());
                 BufferedOutputStream outputStream = new BufferedOutputStream(client.getOutputStream());
     
-                // To read:
                 byte[] buffer = new byte[1024];
-                System.out.println("Reading inputStream...");
+                String ready = "READY\n";
+                byte[] response = ready.getBytes(Charset.forName("UTF-8"));
+
+                for(int i = 0; i < response.length; i++){
+                    buffer[i] = response[i];
+                }
+
+                System.out.println("Sending READY to client...");
+                outputStream.write(buffer);
+                outputStream.flush();
+
+                System.out.println("Waiting for client response...");
                 int count = inputStream.read(buffer);
-                String request = new String(buffer, Charset.forName("UTF-8")).trim();
-                System.out.println(request);
 
-                if(request.equals("READY")){
-                    System.out.println("Got READY from server");
-                    // do the task
+                List<Integer> numbers = new ArrayList<>();
 
-                    // To write:
-                    // … add bytes to buffer as required.
-                    System.out.println("Writing to buffer and flushing...");
+                for (int i = 0; i < buffer.length; i++){ // create int list for math later
+                    numbers.add((int)buffer[i]);
+                }
+                System.out.println(numbers);
+
+                System.out.println("Operand: " + numbers.get(0));
+                System.out.println("Count: " + numbers.get(1));
+
+                double result = numbers.get(2);
+
+                for(int i = 3; i <= (int)buffer[1] + 1; i++){
+                    System.out.println(result + " " + (int)(buffer[i] & 0xff));
+                    switch(numbers.get(0)){
+                        case 0:
+                        result = result - (int)(buffer[i] & 0xff);
+                        break;
+                        case 1:
+                        result = result + (int)(buffer[i] & 0xff);
+                        break;
+                        case 2:
+                        result = result * (int)(buffer[i] & 0xff);
+                        break;
+                        case 3:
+                        result = (double)result / (double)(buffer[i] & 0xff);
+                        break;
+                    }
+                }
+
+                System.out.println("Result: " + result);
+
+
+                // Send to Client
+
+                if(result < 255){
+                    buffer[0] = (byte)result;
                     outputStream.write(buffer);
                     outputStream.flush();
-        
-                    // When done:
-                    System.out.println("Closing Client...");
-                    client.close();
-                    System.out.println("Closed Client");
                 }
                 else{
-                    System.out.println("Ready not recieved");
+                    int i = 0;
+                    while(result > 255){
+                        buffer[i] = (byte)255;
+                        result = result - 255;
+                        i++;
+                    }
+                    buffer[i] = (byte)result;
+                    outputStream.write(buffer);
+                    outputStream.flush();
                 }
+                
+                // When done:
+                System.out.println("Closing Client...");
+                client.close();
+                System.out.println("Closed Client");
             }
         }
         catch(IOException error){

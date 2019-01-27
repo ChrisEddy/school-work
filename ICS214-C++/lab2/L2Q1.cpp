@@ -7,6 +7,7 @@ int main(){
     int year;
     int month;
     int day;
+    int result;
     string weekDay;
 
     cout << "Enter year: (e.g, 2012): ";
@@ -46,18 +47,19 @@ int main(){
         Saturday
     };
 
-    if(static_cast<Month>month == Month::JAN){
+    if(month == static_cast<int>(Month::JAN)){
         month = 13;
         year = year - 1;
     }
-    if(month == 2){
+    
+    if(month == static_cast<int>(Month::FEB)){
         month = 14;
         year = year - 1;
     }
 
-    int h = (day + ((26 * (month + 1)) / 10) + (century) + (century / 4) + (centuryYear / 4) + (5 * century)) % 7;
+    result = (day + ((26 * (month + 1)) / 10) + (century) + (century / 4) + (centuryYear / 4) + (5 * century)) % 7;
 
-    switch(h) {
+    switch(result) {
       case 0:
         cout << "Day of the month is: Saturday" << endl; 
         break;

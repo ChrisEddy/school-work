@@ -13,11 +13,11 @@ class ServerA {
         String port = args[0];
         try{
             ServerSocket socket = new ServerSocket(Integer.parseInt(port));
-            System.out.println("Server started on port:" + " " + port);
+            // System.out.println("Server started on port:" + " " + port);
 
             while (true) {
                 Socket client = socket.accept();
-                System.out.println("New Client");
+                // System.out.println("New Client");
                 BufferedInputStream inputStream = new BufferedInputStream(client.getInputStream());
                 BufferedOutputStream outputStream = new BufferedOutputStream(client.getOutputStream());
     
@@ -29,36 +29,35 @@ class ServerA {
                     buffer[i] = response[i];
                 }
 
-                System.out.println("Sending READY to client...");
+                // System.out.println("Sending READY to client...");
                 outputStream.write(buffer);
                 outputStream.flush();
 
-                System.out.println("Waiting for client response...");
+                // System.out.println("Waiting for client response...");
                 int count = inputStream.read(buffer);
 
                 List<Integer> numbers = new ArrayList<>();
 
                 for (int i = 0; i < buffer.length; i++){ // create int list for math later
-                    numbers.add((int)buffer[i]);
+                    numbers.add(buffer[i] & 0xff);
                 }
-                System.out.println(numbers);
+                // System.out.println(numbers);
 
-                System.out.println("Operand: " + numbers.get(0));
-                System.out.println("Count: " + numbers.get(1));
+                // System.out.println("Operand: " + numbers.get(0));
+                // System.out.println("Count: " + numbers.get(1));
 
                 double result = numbers.get(2);
 
                 for(int i = 3; i <= (int)buffer[1] + 1; i++){
-                    System.out.println(result + " " + (int)(buffer[i] & 0xff));
                     switch(numbers.get(0)){
                         case 0:
-                        result = result - (int)(buffer[i] & 0xff);
+                        result = result - (buffer[i] & 0xff);
                         break;
                         case 1:
-                        result = result + (int)(buffer[i] & 0xff);
+                        result = result + (buffer[i] & 0xff);
                         break;
                         case 2:
-                        result = result * (int)(buffer[i] & 0xff);
+                        result = result * (buffer[i] & 0xff);
                         break;
                         case 3:
                         result = (double)result / (double)(buffer[i] & 0xff);
@@ -66,7 +65,7 @@ class ServerA {
                     }
                 }
 
-                System.out.println("Result: " + result);
+                // System.out.println("Result: " + result);
 
 
                 // Send to Client
@@ -89,9 +88,9 @@ class ServerA {
                 }
                 
                 // When done:
-                System.out.println("Closing Client...");
+                // System.out.println("Closing Client...");
                 client.close();
-                System.out.println("Closed Client");
+                // System.out.println("Closed Client");
             }
         }
         catch(IOException error){

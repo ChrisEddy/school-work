@@ -30,25 +30,28 @@ class ViewController: UIViewController, UITextFieldDelegate {
     // MARK: Actions
     @IBAction func toF(_ sender: Any) {
         let input:String = self.tempField.text!
-        if(!input.isEmpty){
+        if(isNumeric(a: input)){
             temperature = Double(input)! * 9.0 / 5.0 + 32.0
             self.tempResult.text = String(temperature)
         }
         else{
             self.tempResult.text = "N/A"
         }
-        
     }
     
     @IBAction func toC(_ sender: Any) {
         let input:String = self.tempField.text!
-        if(!input.isEmpty){
+        if(isNumeric(a: input)){
             temperature = Double(input)! * 5.0 / 9.0
             self.tempResult.text = String(temperature)
         }
         else{
             self.tempResult.text = "N/A"
         }
+    }
+    
+    func isNumeric(a: String) -> Bool {
+        return Double(a) != nil
     }
 }
 

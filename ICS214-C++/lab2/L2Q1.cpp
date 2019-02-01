@@ -38,21 +38,21 @@ int main(){
     };
 
     enum class Day {
+        Saturday,
         Sunday,
         Monday,
         Tuesday,
         Wednesday,
         Thursday,
-        Friday,
-        Saturday
+        Friday
     };
 
-    if(month == static_cast<int>(Month::JAN)){
+    if(month == static_cast<int>(Month::JAN) + 1){
         month = 13;
         year = year - 1;
     }
     
-    if(month == static_cast<int>(Month::FEB)){
+    if(month == static_cast<int>(Month::FEB) + 1){
         month = 14;
         year = year - 1;
     }

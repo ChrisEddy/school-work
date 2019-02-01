@@ -14,21 +14,27 @@ int main(){
 
     string string_ISBN = to_string(ISBN);
 
-    for (int i = 0; i < string_ISBN.size(); i++){
-        numArray[i] = string_ISBN[i];
-    }
+    int y = 0;
 
     for(int x = 0; x < 9; x++){
-        checkSum = checkSum + (numArray[x] * x);
+        if(string_ISBN.size() < 9 && x < 9 - string_ISBN.size()){
+            checkSum = checkSum + (0 * (x + 1));
+        }
+        else{
+            int num = string_ISBN[y] - '0';
+            checkSum = checkSum + (num * (y + 1));
+            y++;
+        }
     }
 
     checkSum = checkSum % 11;
 
     if(checkSum == 10){
-        to_string(checkSum) = "X";
+        cout << "The ISBN-10 number is: " << ISBN << "X" << "\n";
     }
-
-    cout << "The ISBN-10 number is: " << ISBN << checkSum << "\n";
+    else{
+        cout << "The ISBN-10 number is: " << ISBN << checkSum << "\n";
+    }
 
     return 0;
 }

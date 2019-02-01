@@ -16,7 +16,7 @@ class ClientA {
         String operand = "";
         int operandNum = 0;
         List<Integer> numbers = new ArrayList<>();
-        System.out.println("Client running");
+        // System.out.println("Client running");
 
         for (int i = 0; i < args.length; i++) {
             if(i == 0){
@@ -46,7 +46,7 @@ class ClientA {
                 numbers.add(Integer.parseInt(args[i]));
             }
         }
-        System.out.println(host + " " + port + " " + operand + " " + numbers);
+        // System.out.println(host + " " + port + " " + operand + " " + numbers);
 
         try{
             Socket socket = new Socket(host, Integer.parseInt(port));
@@ -56,37 +56,40 @@ class ClientA {
             byte[] buffer = new byte[1024];
             int count = inputStream.read(buffer); // Wait for READY from server
             String request = new String(buffer, Charset.forName("UTF-8")).trim(); //Convert to String and trim excess space
-            System.out.println(request);
+            // System.out.println(request);
 
             if(request.equals("READY")){
-                System.out.println("READY recieved from server");
+                // System.out.println("READY recieved from server");
 
                 buffer[0] = (byte)operandNum; // make first index the operand
                 buffer[1] = (byte)numbers.size(); // make second index the count
 
                 for (int i = 0; i < numbers.size(); i++){ // assign buffer numbers 
                     buffer[i + 2] = (byte)numbers.get(i).intValue();
-                    System.out.println((byte)numbers.get(i).intValue());
+                    // System.out.println((byte)numbers.get(i).intValue());
                 }
 
-                System.out.println("operandnum: " + operandNum);
+                // System.out.println("operandnum: " + operandNum);
     
                 outputStream.write(buffer); // send it off
                 outputStream.flush();
 
                 // Get result
                 int result = 0;
-
+ 
                 inputStream.read(buffer);
-                result = buffer[0];
-                System.out.println("Result: " + result);
+
+                result = buffer[0] & 0xff;
+
+                System.out.println(result);
+
         
                 // When done:
                 socket.close();
 
             }
             else{
-                System.out.println("Ready not recieved");
+                // System.out.println("Ready not recieved");
             }
 
         }

@@ -1,16 +1,11 @@
 'use strict';
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
-
-const Header = require('../components/header.jsx');
-const Footer = require('../components/footer.jsx');
-const MsgBoard = require('../components/msgBoard.jsx');
-
 require("@babel/register")({presets: [ '@babel/preset-react' ]});
 
-React.createFactory(Header);
-React.createFactory(Footer);
-React.createFactory(MsgBoard);
+const Header = React.createFactory(require('../components/header.jsx'));
+const Footer = React.createFactory(require('../components/footer.jsx'));
+const MsgBoard = React.createFactory(require('../components/msgBoard.jsx'));
 
 // temp hard-coded data
 const msgs = [

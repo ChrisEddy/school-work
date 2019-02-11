@@ -3,12 +3,14 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+
 const appRouter = require('./app_server/routes/app_router');
 
 var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'app_server', 'views')); app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'app_server', 'views'));
+app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -22,6 +24,12 @@ app.use('/', appRouter);
 app.use(function(req, res, next) {
   next(createError(404));
 });
+
+app.use(function(req, res) {
+  res.status(404);
+  res.send('File not found');
+});
+
 
 // error handler
 app.use(function(err, req, res, next) {

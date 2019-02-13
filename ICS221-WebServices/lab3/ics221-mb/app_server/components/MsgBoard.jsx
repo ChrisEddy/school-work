@@ -56,7 +56,7 @@ class MsgBoard extends React.Component{
     render() {
         return (
             <div>
-                <NewMsg addMsgCallback={this.addMessage} />
+                <NewMsg addMsgCallback={this.addMessage}/>
                 <MsgList messages={this.state.messages}/>
             </div>
         )

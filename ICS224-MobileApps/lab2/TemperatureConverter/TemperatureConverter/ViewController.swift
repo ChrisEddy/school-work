@@ -2,8 +2,8 @@
 //  ViewController.swift
 //  TemperatureConverter
 //
-//  Created by Drake on 2019-01-28.
-//  Copyright © 2019 Drake. All rights reserved.
+//  Created by Chris on 2019-01-28.
+//  Copyright © 2019 Chris. All rights reserved.
 //
 
 import UIKit

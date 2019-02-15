@@ -1,5 +1,5 @@
 const React = require('react');
-const MsgList = require('./MsgList');
+const MsgList = require('./MsgList.jsx');
 const NewMsg = require('./NewMsg.jsx');
 
 class MsgBoard extends React.Component{
@@ -9,6 +9,7 @@ class MsgBoard extends React.Component{
             messages: this.props.messages
         };
         this.addMessage = this.addMessage.bind(this);
+        this.handleHTTPErrors = this.handleHTTPErrors.bind(this);
     }
 
     componentDidMount(){
@@ -27,7 +28,10 @@ class MsgBoard extends React.Component{
         });
     }
 
+    
+
     addMessage(message) {
+        console.log('sdbhlgf')
         let msgs = this.state.messages;
      
         // add id attribute

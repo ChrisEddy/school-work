@@ -7,34 +7,22 @@
 using namespace std;
 
 void printHeader(ostream &outStream){  // print the first 2 lines of the report
-    cout << right << setw(10) << "deg";
-    cout << right << setw(10) << "rad";
-    cout << right << setw(10) << "sin";
-    cout << right << setw(10) << "cos" << endl;
-    cout << right << setw(10) << "------";
-    cout << right << setw(10) << "------";
-    cout << right << setw(10) << "------";
-    cout << right << setw(10) << "------" << endl;
     outStream << right << setw(10) << "deg";
-    outStream << right << setw(10) << "rad";
-    outStream << right << setw(10) << "sin";
-    outStream << right << setw(10) << "cos" << endl;
-    outStream << right << setw(10) << "------";
-    outStream << right << setw(10) << "------";
-    outStream << right << setw(10) << "------";
-    outStream << right << setw(10) << "------" << endl;
+    outStream << setw(10) << "rad";
+    outStream << setw(10) << "sin";
+    outStream << setw(10) << "cos" << endl;
+    outStream << setw(10) << "------";
+    outStream << setw(10) << "------";
+    outStream << setw(10) << "------";
+    outStream << setw(10) << "------" << endl;
 }
 
 void printEntry(ostream &outStream, string value){  // print a data row
     double degree = atof(value.c_str());
-    cout << right << setw(10) << setprecision(4) << degree;
-    cout << right << setw(10) << setprecision(4) << degree*((atan(1)*4)/180);
-    cout << right << setw(10) << setprecision(4) << sin (degree*(atan(1)*4)/180);
-    cout << right << setw(10) << setprecision(4) << cos (degree*(atan(1)*4)/180.0 ) << endl;
-    outStream << right << setw(10) << degree;
-    outStream << right << setw(10) << setprecision(4) << degree*((atan(1)*4)/180);
-    outStream << right << setw(10) << setprecision(4) << sin (degree*(atan(1)*4)/180);
-    outStream << right << setw(10) << setprecision(4) << cos (degree*(atan(1)*4)/180.0 ) << endl;
+    outStream << right << setw(10) << fixed << setprecision(1) << degree;
+    outStream << setw(10) << setprecision(4) << degree*((atan(1)*4)/180);
+    outStream << setw(10) << setprecision(4) << sin (degree*(atan(1)*4)/180);
+    outStream << setw(10) << setprecision(4) << cos (degree*(atan(1)*4)/180.0 ) << endl;
 } 
 
 int main(int argc, char *argv[]){
@@ -51,15 +39,18 @@ int main(int argc, char *argv[]){
 
     outputFile = "result_" + inputFile;
     ifstream inputStream (inputFile);
-    ofstream outputStream (outputFile);
-
+    
     if(inputStream.is_open()){
+        ofstream outputStream (outputFile);
         if (outputStream.is_open()){
             printHeader(outputStream);
+            printHeader(cout);
             while (getline (inputStream, line)){
                 printEntry(outputStream, line);
+                printEntry(cout, line);
             }
             inputStream.close();
+            outputStream.close();
         }
         else{
             cout << "Unable to open output file: " << outputFile;
